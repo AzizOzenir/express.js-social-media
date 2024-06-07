@@ -1,0 +1,181 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id               Int             @id @default(autoincrement())
+  username         String          @unique
+  email            String          @unique
+  password         String
+  profile          Profile?
+  posts            Post[]
+  comments         Comment[]
+  likes            Like[]
+  followers        Follow[]        @relation("followers")
+  following        Follow[]        @relation("following")
+  messagesSent     Message[]       @relation("sentMessages")
+  messagesReceived Message[]       @relation("receivedMessages")
+  groups           Group[]
+  groupMemberships GroupMember[]
+  eventsOrganized  Event[]
+  eventAttendance  EventAttendee[]
+  sentRequests     FriendRequest[] @relation("sentRequests")
+  receivedRequests FriendRequest[] @relation("receivedRequests")
+  activityLogs     ActivityLog[]
+  createdAt        DateTime        @default(now())
+  updatedAt        DateTime        @updatedAt
+}
+
+model Profile {
+  id             Int      @id @default(autoincrement())
+  bio            String?
+  profileImage   String?  // URL or path to the profile image
+  backgroundImage String? // URL or path to the background image
+  location       String?  // User's location
+  website        String?  // User's personal website URL
+  twitter        String?  // Twitter profile link
+  facebook       String?  // Facebook profile link
+  instagram      String?  // Instagram profile link
+  userId         Int      @unique
+  user           User     @relation(fields: [userId], references: [id])
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+}
+
+
+model Post {
+  id        Int       @id @default(autoincrement())
+  content   String
+  imageUrl  String?
+  authorId  Int
+  author    User      @relation(fields: [authorId], references: [id])
+  comments  Comment[]
+  likes     Like[]
+  tags      PostTag[]
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+}
+
+model Comment {
+  id        Int      @id @default(autoincrement())
+  content   String
+  postId    Int
+  authorId  Int
+  post      Post     @relation(fields: [postId], references: [id])
+  author    User     @relation(fields: [authorId], references: [id])
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Like {
+  id        Int      @id @default(autoincrement())
+  postId    Int
+  userId    Int
+  post      Post     @relation(fields: [postId], references: [id])
+  user      User     @relation(fields: [userId], references: [id])
+  createdAt DateTime @default(now())
+}
+
+model Follow {
+  id          Int      @id @default(autoincrement())
+  followerId  Int
+  followingId Int
+  follower    User     @relation("followers", fields: [followerId], references: [id])
+  following   User     @relation("following", fields: [followingId], references: [id])
+  createdAt   DateTime @default(now())
+}
+
+model Message {
+  id         Int      @id @default(autoincrement())
+  content    String
+  senderId   Int
+  receiverId Int
+  sender     User     @relation("sentMessages", fields: [senderId], references: [id])
+  receiver   User     @relation("receivedMessages", fields: [receiverId], references: [id])
+  createdAt  DateTime @default(now())
+}
+
+model Group {
+  id          Int           @id @default(autoincrement())
+  name        String
+  description String?
+  ownerId     Int
+  owner       User          @relation(fields: [ownerId], references: [id])
+  members     GroupMember[]
+  createdAt   DateTime      @default(now())
+  updatedAt   DateTime      @updatedAt
+}
+
+model GroupMember {
+  id       Int      @id @default(autoincrement())
+  groupId  Int
+  userId   Int
+  group    Group    @relation(fields: [groupId], references: [id])
+  user     User     @relation(fields: [userId], references: [id])
+  joinedAt DateTime @default(now())
+}
+
+model Event {
+  id          Int             @id @default(autoincrement())
+  name        String
+  description String?
+  date        DateTime
+  organizerId Int
+  organizer   User            @relation(fields: [organizerId], references: [id])
+  attendees   EventAttendee[]
+  createdAt   DateTime        @default(now())
+  updatedAt   DateTime        @updatedAt
+}
+
+model EventAttendee {
+  id       Int      @id @default(autoincrement())
+  eventId  Int
+  userId   Int
+  event    Event    @relation(fields: [eventId], references: [id])
+  user     User     @relation(fields: [userId], references: [id])
+  joinedAt DateTime @default(now())
+}
+
+model FriendRequest {
+  id         Int      @id @default(autoincrement())
+  senderId   Int
+  receiverId Int
+  sender     User     @relation("sentRequests", fields: [senderId], references: [id])
+  receiver   User     @relation("receivedRequests", fields: [receiverId], references: [id])
+  status     String   @default("pending")
+  createdAt  DateTime @default(now())
+}
+
+model Tag {
+  id    Int       @id @default(autoincrement())
+  name  String    @unique
+  posts PostTag[]
+}
+
+model PostTag {
+  postId Int
+  tagId  Int
+  post   Post @relation(fields: [postId], references: [id])
+  tag    Tag  @relation(fields: [tagId], references: [id])
+
+  @@id([postId, tagId])
+}
+
+model ActivityLog {
+  id        Int      @id @default(autoincrement())
+  userId    Int
+  action    String
+  user      User     @relation(fields: [userId], references: [id])
+  createdAt DateTime @default(now())
+}

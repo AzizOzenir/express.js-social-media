@@ -1,0 +1,1 @@
+{"version":3,"file":"unatuhorized.js","sourceRoot":"","sources":["../../src/exceptions/unatuhorized.ts"],"names":[],"mappings":";;;AAAA,iCAAuC;AAEvC,MAAa,qBAAsB,SAAQ,oBAAa;IACtD,YAAY,OAAe,EAAE,SAAiB,EAAE,MAAY;QAC1D,KAAK,CAAC,OAAO,EAAE,SAAS,EAAE,GAAG,EAAE,MAAM,CAAC,CAAC;IACzC,CAAC;CACF;AAJD,sDAIC"}
