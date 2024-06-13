@@ -1,0 +1,1 @@
+export const inputfieldClassname = "bg-[#F1F1F1] focus:outline-none  rounded-[4px] p-2 w-full  border-[1px] border-[#E4E4E4] "
