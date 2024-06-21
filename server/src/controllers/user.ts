@@ -3,6 +3,8 @@ import { prismaClient } from "./../index";
 import { BadRequestException } from "../exceptions/bad_requests";
 import { ErrorCode } from "../exceptions/root";
 import { NotFoundException } from "../exceptions/not_found";
+import multer from "multer";
+import { BASE_URL } from './../../../client/src/consts';
 
 export const getUsers = async (req: Request, res: Response) => {
   try {
@@ -18,12 +20,11 @@ export const getUsers = async (req: Request, res: Response) => {
 };
 
 export const getUser = async (req: Request, res: Response) => {
-  const { id } = req.params;
+  const { username } = req.params;
   try {
     const user = await prismaClient.user.findUnique({
-      where: { id: parseInt(id) },
+      where: { username: username },
       include: {
-        profile: true,
         posts: true,
         comments: true,
         likes: true,
@@ -78,12 +79,36 @@ export const createUser = async (req: Request, res: Response) => {
 };
 
 export const updateUser = async (req: Request, res: Response) => {
-  const { id } = req.params;
-  const { username, email, password } = req.body;
+  const { username } = req.params;
+  const {
+    email,
+    password,
+    bio,
+    location,
+    profileImage,
+    website,
+    twitter,
+    facebook,
+    instagram,
+  } = req.body;
   try {
+    const backgroundImage = req.file !== undefined ? `http://localhost:3001/uploads/${req.file.filename}` : "";
+
     const updatedUser = await prismaClient.user.update({
-      where: { id: parseInt(id) },
-      data: { username: username, email: email, password: password },
+      where: { username: username },
+      data: {
+        username: username,
+        email: email,
+        password: password,
+        bio: bio,
+        location: location,
+        profileImage: profileImage,
+        backgroundImage: backgroundImage,
+        website: website,
+        twitter: twitter,
+        facebook: facebook,
+        instagram: instagram,
+      },
     });
     res.json({ updatedUser });
   } catch (error) {
@@ -96,35 +121,36 @@ export const updateUser = async (req: Request, res: Response) => {
 };
 
 export const deleteUser = async (req: Request, res: Response) => {
-  const { id } = req.params;
+  const { username } = req.params;
   try {
+    const user = await prismaClient.user.findUnique({
+      where: {
+        username: username,
+      },
+    });
+
     // Delete related data first
-    await prismaClient.comment.deleteMany({
-      where: { authorId: parseInt(id) },
-    });
-    await prismaClient.post.deleteMany({ where: { authorId: parseInt(id) } });
-    await prismaClient.like.deleteMany({ where: { userId: parseInt(id) } });
+    await prismaClient.comment.deleteMany({ where: { authorId: user.id } });
+    await prismaClient.post.deleteMany({ where: { authorId: user.id } });
+    await prismaClient.like.deleteMany({ where: { userId: user.id } });
     await prismaClient.message.deleteMany({
-      where: { OR: [{ senderId: parseInt(id) }, { receiverId: parseInt(id) }] },
+      where: { OR: [{ senderId: user.id }, { receiverId: user.id }] },
     });
-    await prismaClient.group.deleteMany({ where: { ownerId: parseInt(id) } });
-    await prismaClient.groupMember.deleteMany({
-      where: { userId: parseInt(id) },
-    });
-    await prismaClient.event.deleteMany({
-      where: { organizerId: parseInt(id) },
-    });
-    await prismaClient.eventAttendee.deleteMany({
-      where: { userId: parseInt(id) },
-    });
+    await prismaClient.group.deleteMany({ where: { ownerId: user.id } });
+    await prismaClient.groupMember.deleteMany({ where: { userId: user.id } });
+    await prismaClient.event.deleteMany({ where: { organizerId: user.id } });
+    await prismaClient.eventAttendee.deleteMany({ where: { userId: user.id } });
     await prismaClient.friendRequest.deleteMany({
-      where: { OR: [{ senderId: parseInt(id) }, { receiverId: parseInt(id) }] },
+      where: { OR: [{ senderId: user.id }, { receiverId: user.id }] },
     });
-    await prismaClient.activityLog.deleteMany({
-      where: { userId: parseInt(id) },
+    await prismaClient.activityLog.deleteMany({ where: { userId: user.id } });
+    await prismaClient.follow.deleteMany({
+      where: { OR: [{ followerId: user.id }, { followingId: user.id }] },
     });
+
     // Finally, delete the user
-    await prismaClient.user.delete({ where: { id: parseInt(id) } });
+    await prismaClient.user.delete({ where: { id: user.id } });
+
     res.json({ message: "User deleted successfully" });
   } catch (error) {
     throw new BadRequestException(

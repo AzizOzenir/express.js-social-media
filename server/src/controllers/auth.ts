@@ -33,7 +33,14 @@ export const signup = async (
       password: hashSync(password, 10),
     },
   });
-  res.json(user);
+  const token = jwt.sign(
+    {
+      username: user!.username,
+    },
+    JWT_SECRET
+  );
+
+  res.json({ user: user, token: token });
 };
 
 export const login = async (
@@ -63,14 +70,14 @@ export const login = async (
 
   const token = jwt.sign(
     {
-      userId: user!.id,
+      username: user!.username,
     },
     JWT_SECRET
   );
 
   res.json({ user: user, token: token });
 };
-/* 
+
 export const me = async (req: Request, res: Response) => {
   if (req.user) {
     res.json(req.user);
@@ -78,4 +85,3 @@ export const me = async (req: Request, res: Response) => {
     res.status(401).json({ message: "Unauthorized" });
   }
 };
- */

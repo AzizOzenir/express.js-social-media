@@ -23,6 +23,7 @@ app.use(cors(corsOptions));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(errorMiddleware);
+app.use('/uploads', express.static('uploads'));
 app.use("/api", rootRouter);
 app.listen(PORT, () => {
   return console.log(

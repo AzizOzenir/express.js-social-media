@@ -21,12 +21,16 @@
   "dependencies": {
     "-": "^0.0.1",
     "@prisma/client": "^5.15.0",
+    "@types/multer": "^1.4.11",
     "bcrypt": "^5.1.1",
+    "cloudinary": "^2.2.0",
     "cors": "^2.8.5",
     "dotenv": "^16.4.5",
     "express": "^4.17.1",
     "express-json": "^1.0.0",
     "jsonwebtoken": "^9.0.2",
+    "multer": "1.4.5-lts.1",
+    "next-cloudinary": "^6.6.2",
     "save": "^2.9.0",
     "save-dev": "0.0.1-security",
     "zod": "^3.23.8"

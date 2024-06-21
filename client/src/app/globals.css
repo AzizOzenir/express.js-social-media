@@ -5,7 +5,13 @@
 
 
 body {
-color: black;
-background-color: white;
+  color: rgb(var(--foreground-rgb));
+   background: linear-gradient(
+      to right top,
+      #dcfce7,
+      rgb(220 252 231)
+    ) 
+
+  
 }
 

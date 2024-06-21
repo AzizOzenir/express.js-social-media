@@ -1,1 +1,11 @@
-export const inputfieldClassname = "bg-[#F1F1F1] focus:outline-none  rounded-[4px] p-2 w-full  border-[1px] border-[#E4E4E4] "
+
+
+export const BASE_URL = "http://localhost:3001/api/";
+
+// its kind of middleware for checking logged in user
+//  const checkLoggedIn = () => {
+//   const router = useRouter();
+//    if (!localStorage.getItem("token")) {
+//      router.push("/login");
+//    }
+// };

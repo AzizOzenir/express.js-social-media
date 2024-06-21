@@ -1,44 +1,53 @@
-import Image, { StaticImageData } from "next/image";
-import React from "react";
-import { example, logo } from "../../public/images";
+import Image from 'next/image';
+import React from 'react';
 
-const Stories = () => {
-  const stories = [
-    {
-      imageUrl: "https://example.com/story1.jpg",
-      storyImage: example,
-    },
-    {
-      imageUrl: "https://example.com/story1.jpg",
-      storyImage: example,
-    },
-    {
-      imageUrl: "https://example.com/story1.jpg",
-      storyImage: example,
-    },
-  ];
-  return (
-    <div className="flex justify-center items-center w-full bg-black">
-      {stories.map((story, index) => (
-        <Story key={index} storyUrl={""} storyImage={story.storyImage} />
-      ))}
-    </div>
-  );
+const Stories: React.FC = () => {
+    const userData = [
+        {
+            name: "John Doe",
+            profilePic: "",
+            storyImage: ""
+        },
+        {
+            name: "Jane Smith",
+            profilePic: "",
+            storyImage: ""
+        },
+        {
+            name: "John Doe",
+            profilePic: "",
+            storyImage: ""
+        },
+        {
+            name: "Jane Smith",
+            profilePic: "",
+            storyImage: ""
+        },
+
+        {
+            name: "John Doe",
+            profilePic: "",
+            storyImage: ""
+        },
+     
+   
+    ];
+
+    return (
+        <div className="flex overflow-x-auto w-[500px] whitespace-nowrap relative">
+            {userData.map((user, index) => {
+                return (
+                    <div key={index} className="story relative w-1/5 h-24 cursor-pointer rounded-xl overflow-hidden mx-2">
+                        <div className="overlay absolute top-0 left-0 w-full h-full bg-gradient-to-b from-transparent to-indigo-900 opacity-60"></div>
+                        <Image src={user.storyImage} alt="" className="w-full h-full object-cover absolute" />
+                        <Image src={user.profilePic} alt="" className="w-6 h-6 object-cover absolute top-1 left-1 rounded-full ring-2 ring-white" />
+                        <div className="name text-xs text-white absolute bottom-1 left-1 z-10">{user.name}</div>
+                    </div>
+                );
+            })}
+        </div>
+        
+    );
 };
 
 export default Stories;
-
-interface StoryProps {
-  storyUrl: String;
-  storyImage: StaticImageData; // in seconds
-}
-
-const Story: React.FC<StoryProps> = ({ storyUrl, storyImage }) => {
-  return (
-    <div className="relative flex items-center justify-center w-24 h-24 rounded-full bg-gradient-to-tr from-yellow-400 via-red-500 to-pink-500 animate-rotate">
-      <div className=" absolute inset-1 bg-white rounded-full overflow-hidden ">
-        <Image src={storyImage} alt="" className=" h-[88px] w-[88px] rounded-full object-cover"/>
-      </div>
-    </div>
-  );
-};

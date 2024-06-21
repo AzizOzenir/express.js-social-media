@@ -1,11 +1,13 @@
-import Image from "next/image";
-import Login from "./(pages)/(auth)/login/page";
-import Stories from "@/components/stories";
+"use client"
+import { redirect } from "next/navigation";
+import { useEffect } from "react";
 
 export default function Home() {
+  useEffect(() => {
+    redirect("/line");
+  }, []);
+
   return (
-    <main className="flex h-screen flex-col items-center justify-between ">
-      <Stories/>
-    </main>
+    <main className="flex min-h-screen flex-col items-center justify-between p-24"></main>
   );
 }

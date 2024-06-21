@@ -11,7 +11,7 @@ export const getTags = async (req: Request, res: Response) => {
           posts: true,
         },
       });
-      res.json(tags);
+      res.json({tags});
     } catch (error) {
       throw new BadRequestException(
         "Something went wrong:",
@@ -31,7 +31,7 @@ export const getTags = async (req: Request, res: Response) => {
         },
       });
       if (tag) {
-        res.json(tag);
+        res.json({tag});
       } else {
         throw new NotFoundException(
           "Tag not found",
@@ -55,7 +55,7 @@ export const getTags = async (req: Request, res: Response) => {
           name,
         },
       });
-      res.json(tag);
+      res.json({tag});
     } catch (error) {
       throw new BadRequestException(
         "Something went wrong:",
@@ -73,7 +73,7 @@ export const getTags = async (req: Request, res: Response) => {
         where: { id: parseInt(id) },
         data: { name },
       });
-      res.json(updatedTag);
+      res.json({updatedTag});
     } catch (error) {
       throw new BadRequestException(
         "Something went wrong:",
